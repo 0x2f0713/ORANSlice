@@ -1,7 +1,7 @@
 # ORANSlice 
 
 ORANSlice is an end-to-end open-source 5G network slicing framework for O-RAN. 
-It (i) extends the 5G protocol stacks of OAI to support RAN slicing; (ii) implements an E2SM-CCC-based SM and xApp for RAN slicing control; (iii) conducts extensive testing and validation on Arena and X5G testbeds to ensure the robustness and effectiveness of the implementation.
+It (i) extends the 5G protocol stacks of OAI to support RAN slicing; (ii) implements an E2SM-CCC-based SM and xApp for RAN slicing control; (iii) conducts extensive testing and validation on [Arena](https://openrangym.com/experimental-platforms/arena) and [X5G](https://x5g.org/) testbeds to ensure the robustness and effectiveness of the implementation.
 
 The framework of ORANSlice is shown in the diagram below:
 <!-- ![End-to-end network slicing in O-RAN](./doc/ORANSlice_Framework.png ) -->
@@ -61,7 +61,7 @@ cd cmake_targets
 
 The customized RAN slicing and E2 Agent code are integrated into OAI 2024.w28 release.
 
-### Disaggregated gNB from Nvidia Aerial and OAI 
+### Disaggregated gNB from NVIDIA Aerial and OAI 
 
 Please refer to the tutorial in [ARC-OTA](https://docs.nvidia.com/aerial/aerial-ran-colab-ota/current/) and [Aerial CUDA-Accelerated RAN](https://docs.nvidia.com/aerial/cuda-accelerated-ran/index.html).
 
@@ -76,9 +76,9 @@ Follow the [guide](https://gitlab.eurecom.fr/oai/openairinterface5g/-/blob/NR_UE
 **If you do not need multiple-pdu support at nrUE, you can build and run nrUE at `oai_ran`**
 
 ### COTS UE
-You can use COTS 5G UE modules from Sierra Wirless or Quectel to establish network slicing connection.
+You can use COTS 5G UE modules from Sierra Wireless or Quectel to establish network slicing connection.
 
-## near-real-time RIC
+## Near-Real-Time RIC
 
 ### OSC Near-RT RIC 
 The O-RAN Software Community (OSC) Near-RT RIC Release E can be installed following this [guide](https://docs.o-ran-sc.org/projects/o-ran-sc-ric-plt-ric-dep/en/latest/installation-guides.html). Note that for this tutorial, the OSC Near-RT RIC runs on an OpenShift cluster, whereas a plain Kubernetes deployment might require specific networking configurations.
@@ -173,11 +173,11 @@ python slicing_ctrl_influxdb_xapp_kpm.py
 
 The kpm-xapp.py script can be easily modified to save these metrics in an external dB, such as InfluxDB, and then display them on a dashboard, such as Grafana.
 
-## Trouble Shooting
+## Troubleshooting
 
 ### RAN Slicing functionality 
 
-You can test the RAN Slicing functionality without xAPP and near-RT RIC by applying the patch:
+You can test the RAN Slicing functionality without xApp and near-RT RIC by applying the patch:
 ```
 cd oai_ran
 git apply ../doc/rrmPolicyJson.patch
