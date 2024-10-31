@@ -48,7 +48,7 @@ The implementation of RAN Slicing is based on the OAI 5G protocal stack.
 sudo apt-get update
 sudo apt install protobuf-compiler
 sudo apt install libprotoc-dev
-git clone https://github.com/protobuf-c/protobuf-c && cd protobuf-c/ && ./configure && make && sudo make install && sudo ldconfig
+git clone https://github.com/protobuf-c/protobuf-c && cd protobuf-c/ && ./autogen.sh && ./configure && make && sudo make install && sudo ldconfig
 ```
 
 Go to folder `oai_ran` and follow the steps to build:
