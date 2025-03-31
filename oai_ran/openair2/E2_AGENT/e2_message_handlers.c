@@ -42,6 +42,11 @@ in_mess is cleared here
 */
 void build_indication_response(RANMessage* in_mess, int out_socket, sockaddr_in servaddr){
 
+    RANMessage msg = RAN_MESSAGE__INIT;
+    msg.msg_type = RAN_MESSAGE_TYPE__INDICATION_RESPONSE;
+    msg.payload_case = RAN_MESSAGE__PAYLOAD_RAN_INDICATION_RESPONSE;
+
+
     RANIndicationResponse rsp = RAN_INDICATION_RESPONSE__INIT;
     RANParamMapEntry **map;
     void* buf;
@@ -68,9 +73,10 @@ void build_indication_response(RANMessage* in_mess, int out_socket, sockaddr_in 
 
     rsp.n_param_map=in_mess->ran_indication_request->n_target_params;
     rsp.param_map=map;
-    buflen = ran_indication_response__get_packed_size(&rsp);
+    msg.ran_indication_response = &rsp;
+    buflen = ran_message__get_packed_size(&msg);
     buf = malloc(buflen);
-    ran_indication_response__pack(&rsp,buf);
+    ran_message__pack(&msg,buf);
     LOG_I(E2_AGENT,"Sending indication response\n");
     unsigned slen = sizeof(servaddr);
     int rev = sendto(out_socket, (const char *)buf, buflen,
