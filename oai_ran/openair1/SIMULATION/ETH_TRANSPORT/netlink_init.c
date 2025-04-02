@@ -137,9 +137,10 @@ int netlink_init_tun(char *ifprefix, int num_if, int id) {//for UE, id = 1, 2, .
   char ifname[64];
 
   int begx = (id == 0) ? 0 : id - 1;
-  int endx = (id == 0) ? num_if : id;
-  for (int i = begx; i < endx; i++) {
-    sprintf(ifname, "oaitun_%.3s%d",ifprefix,i+1);
+  int endx = (num_if == 1) ? begx + 1 : begx + num_if;
+  for (int j = begx, i; j < endx; j++) {
+    i = j - begx;
+    sprintf(ifname, "oaitun_%.3s%d",ifprefix,j+1);
     nas_sock_fd[i] = tun_alloc(ifname);
 
     if (nas_sock_fd[i] == -1) {

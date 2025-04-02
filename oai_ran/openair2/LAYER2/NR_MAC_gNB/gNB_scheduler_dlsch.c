@@ -1598,8 +1598,8 @@ static void nr_fr1_dlsch_preprocessor(module_id_t module_id, frame_t frame, sub_
   nr_slice_preprocess(module_id, frame, slot);
 
   // Slice policy update
-  // if ((frame & 127) == 0 && slot == 0)
-  //   nr_update_slice_policy(module_id);
+  if ((frame & 127) == 0 && slot == 0)
+    nr_update_slice_policy(module_id);
 
   int bw = scc->downlinkConfigCommon->frequencyInfoDL->scs_SpecificCarrierList.list.array[0]->carrierBandwidth;
   int average_agg_level = 4; // TODO find a better estimation

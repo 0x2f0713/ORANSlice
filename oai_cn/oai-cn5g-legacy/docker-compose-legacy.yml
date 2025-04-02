@@ -1,5 +1,21 @@
 #version: '3.8'
 services:
+    iperf3-server-1:
+        container_name: "iperf3-server-1"
+        image: networkstatic/iperf3
+        entrypoint: "iperf3 -s"
+        networks:
+            public_net:
+                ipv4_address: 192.168.70.139
+
+    iperf3-server-2:
+        container_name: "iperf3-server-2"
+        image: networkstatic/iperf3
+        entrypoint: "iperf3 -s"
+        networks:
+            public_net:
+                ipv4_address: 192.168.70.140
+
     mysql:
         container_name: "mysql"
         image: mysql:8.0
@@ -164,7 +180,7 @@ services:
             # Slice 0 (1, 0xFFFFFF)
             - DNN_NI0=oai
             - TYPE0=IPv4
-            - DNN_RANGE0=12.1.1.2 - 12.1.1.254
+            - DNN_RANGE0=12.1.1.2 - 12.1.1.127
             - NSSAI_SST0=1
             - NSSAI_SD0=0xFFFFFF
             - SESSION_AMBR_UL0=10Gbps
@@ -172,7 +188,7 @@ services:
             # Slice 1 (1, 0x000002)
             - DNN_NI1=oai2
             - TYPE1=IPv4
-            - DNN_RANGE1=12.1.2.2 - 12.1.2.254
+            - DNN_RANGE1=12.1.1.128 - 12.1.2.254
             - NSSAI_SST1=1
             - NSSAI_SD1=0x000002
             - SESSION_AMBR_UL1=10Gbps
@@ -237,7 +253,6 @@ services:
                 ipv4_address: 192.168.70.135
 networks:
     public_net:
-        external: true
         driver: bridge
         name: demo-oai-public-net
         ipam:
