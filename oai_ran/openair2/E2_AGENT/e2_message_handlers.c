@@ -416,7 +416,7 @@ UeListM* get_ue_list(){
         ue_info_list[i]->dl_errors_window = stats->dl.errors_window;
         
         ue_info_list[i]->has_dl_bler_window = 1;
-        ue_info_list[i]->dl_bler_window = (float)stats->dl.errors_window / (float)stats->dl.total_window;
+        ue_info_list[i]->dl_bler_window = (stats->dl.total_window == 0) ? 0 : (float)stats->dl.errors_window / (float)stats->dl.total_window;
 
         stats->dl.total_window = 0;
         stats->dl.errors_window = 0;
