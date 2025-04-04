@@ -223,6 +223,10 @@ services:
             - NSSAI_SST_1=1
             - NSSAI_SD_1=0x000002
             - DNN_1=oai2
+            # Slice 3 (2, 0x000002)
+            - NSSAI_SST_2=2
+            - NSSAI_SD_2=0x000002
+            - DNN_2=oai_urllc
         depends_on:
             - oai-nrf
             - oai-smf
