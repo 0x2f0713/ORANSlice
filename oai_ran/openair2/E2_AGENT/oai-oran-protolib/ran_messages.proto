@@ -68,12 +68,12 @@ message ue_info_m{
 
     optional bool is_GBR = 6;
 
-    optional float dl_mac_buffer_occupation = 7;
+    optional int32 dl_mac_buffer_occupation = 7;
 
     optional float avg_prbs_dl = 8;
     optional float avg_prbs_ul = 9;
 
-    optional int32 mcs = 10;
+    optional uint32 mcs = 10;
 
     optional float avg_tbs_per_prb_dl = 11;
     optional float avg_tbs_per_prb_ul = 12;
@@ -82,18 +82,25 @@ message ue_info_m{
     optional float ph = 14;
     optional float pcmax = 15;
 
-    optional float dl_total_bytes = 16;
-    optional float dl_errors = 17;
+    optional uint64 dl_total_bytes = 16;
+    optional uint64 dl_errors = 17;
     optional float dl_bler = 18;
-    optional float dl_mcs = 19;
+    optional uint32 dl_mcs = 19;
 
-    optional float ul_total_bytes = 20;
-    optional float ul_errors = 21;
+    optional uint64 ul_total_bytes = 20;
+    optional uint64 ul_errors = 21;
     optional float ul_bler = 22;
-    optional float ul_mcs = 23;
+    optional uint32 ul_mcs = 23;
 
     optional int32 nssai_sST = 24;
     optional int32 nssai_sD = 25;
+
+    optional int32 wb_cqi_1tb = 26;
+    optional int32 wb_cqi_2tb = 27;
+
+    optional uint32 dl_total_window = 28;
+    optional uint32 dl_errors_window = 29;
+    optional float dl_bler_window = 30;
 }
 
 message ue_list_m{

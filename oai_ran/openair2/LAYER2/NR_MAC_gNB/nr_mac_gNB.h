@@ -718,6 +718,8 @@ typedef struct NR_mac_dir_stats {
   uint32_t current_rbs;
   nr_slice_stats_t slice[MAX_NUM_PDU_SESSION+1];
   uint8_t num_sched_slots;
+  uint32_t total_window;
+  uint32_t errors_window;
 } NR_mac_dir_stats_t;
 
 typedef struct NR_mac_stats {

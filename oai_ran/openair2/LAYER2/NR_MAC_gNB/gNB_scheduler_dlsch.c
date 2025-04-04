@@ -390,6 +390,7 @@ void abort_nr_dl_harq(NR_UE_info_t* UE, int8_t harq_pid)
   harq->ndi ^= 1;
   harq->round = 0;
   UE->mac_stats.dl.errors++;
+  UE->mac_stats.dl.errors_window++;
   add_tail_nr_list(&sched_ctrl->available_dl_harq, harq_pid);
 
 }
@@ -2121,6 +2122,7 @@ void nr_schedule_ue_spec(module_id_t module_id,
       UE->mac_stats.dl.num_mac_sdu += sdus;
       UE->mac_stats.dl.current_rbs = sched_pdsch->rbSize;
       UE->mac_stats.dl.total_sdu_bytes += dlsch_total_bytes;
+      UE->mac_stats.dl.total_window += sdus;
 
       //SLice_stat
       UE->mac_stats.dl.slice[sched_ctrl->slice_for_this_sched].total_bytes += TBS;

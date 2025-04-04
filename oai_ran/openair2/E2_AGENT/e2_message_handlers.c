@@ -405,6 +405,21 @@ UeListM* get_ue_list(){
         ue_info_list[i]->nssai_sst = sched_ctrl->dl_sl_info[4].nssai.sst;
         ue_info_list[i]->has_nssai_sd = 1;
         ue_info_list[i]->nssai_sd = sched_ctrl->dl_sl_info[4].nssai.sd;
+
+        ue_info_list[i]->has_wb_cqi_1tb = 1;
+        ue_info_list[i]->wb_cqi_1tb = sched_ctrl->CSI_report.cri_ri_li_pmi_cqi_report.wb_cqi_1tb;
+
+        ue_info_list[i]->has_dl_total_window = 1;
+        ue_info_list[i]->dl_total_window = stats->dl.total_window;
+        
+        ue_info_list[i]->has_dl_errors_window = 1;
+        ue_info_list[i]->dl_errors_window = stats->dl.errors_window;
+        
+        ue_info_list[i]->has_dl_bler_window = 1;
+        ue_info_list[i]->dl_bler_window = (float)stats->dl.errors_window / (float)stats->dl.total_window;
+
+        stats->dl.total_window = 0;
+        stats->dl.errors_window = 0;
     }
     // add a null terminator to the list
     ue_info_list[num_ues] = NULL;

@@ -719,7 +719,7 @@ const ProtobufCMessageDescriptor ran_message__descriptor =
   (ProtobufCMessageInit) ran_message__init,
   NULL,NULL,NULL    /* reserved[123] */
 };
-static const ProtobufCFieldDescriptor ue_info_m__field_descriptors[25] =
+static const ProtobufCFieldDescriptor ue_info_m__field_descriptors[30] =
 {
   {
     "rnti",
@@ -797,7 +797,7 @@ static const ProtobufCFieldDescriptor ue_info_m__field_descriptors[25] =
     "dl_mac_buffer_occupation",
     7,
     PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_FLOAT,
+    PROTOBUF_C_TYPE_INT32,
     offsetof(UeInfoM, has_dl_mac_buffer_occupation),
     offsetof(UeInfoM, dl_mac_buffer_occupation),
     NULL,
@@ -833,7 +833,7 @@ static const ProtobufCFieldDescriptor ue_info_m__field_descriptors[25] =
     "mcs",
     10,
     PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_INT32,
+    PROTOBUF_C_TYPE_UINT32,
     offsetof(UeInfoM, has_mcs),
     offsetof(UeInfoM, mcs),
     NULL,
@@ -905,7 +905,7 @@ static const ProtobufCFieldDescriptor ue_info_m__field_descriptors[25] =
     "dl_total_bytes",
     16,
     PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_FLOAT,
+    PROTOBUF_C_TYPE_UINT64,
     offsetof(UeInfoM, has_dl_total_bytes),
     offsetof(UeInfoM, dl_total_bytes),
     NULL,
@@ -917,7 +917,7 @@ static const ProtobufCFieldDescriptor ue_info_m__field_descriptors[25] =
     "dl_errors",
     17,
     PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_FLOAT,
+    PROTOBUF_C_TYPE_UINT64,
     offsetof(UeInfoM, has_dl_errors),
     offsetof(UeInfoM, dl_errors),
     NULL,
@@ -941,7 +941,7 @@ static const ProtobufCFieldDescriptor ue_info_m__field_descriptors[25] =
     "dl_mcs",
     19,
     PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_FLOAT,
+    PROTOBUF_C_TYPE_UINT32,
     offsetof(UeInfoM, has_dl_mcs),
     offsetof(UeInfoM, dl_mcs),
     NULL,
@@ -953,7 +953,7 @@ static const ProtobufCFieldDescriptor ue_info_m__field_descriptors[25] =
     "ul_total_bytes",
     20,
     PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_FLOAT,
+    PROTOBUF_C_TYPE_UINT64,
     offsetof(UeInfoM, has_ul_total_bytes),
     offsetof(UeInfoM, ul_total_bytes),
     NULL,
@@ -965,7 +965,7 @@ static const ProtobufCFieldDescriptor ue_info_m__field_descriptors[25] =
     "ul_errors",
     21,
     PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_FLOAT,
+    PROTOBUF_C_TYPE_UINT64,
     offsetof(UeInfoM, has_ul_errors),
     offsetof(UeInfoM, ul_errors),
     NULL,
@@ -989,7 +989,7 @@ static const ProtobufCFieldDescriptor ue_info_m__field_descriptors[25] =
     "ul_mcs",
     23,
     PROTOBUF_C_LABEL_OPTIONAL,
-    PROTOBUF_C_TYPE_FLOAT,
+    PROTOBUF_C_TYPE_UINT32,
     offsetof(UeInfoM, has_ul_mcs),
     offsetof(UeInfoM, ul_mcs),
     NULL,
@@ -1021,6 +1021,66 @@ static const ProtobufCFieldDescriptor ue_info_m__field_descriptors[25] =
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
+  {
+    "wb_cqi_1tb",
+    26,
+    PROTOBUF_C_LABEL_OPTIONAL,
+    PROTOBUF_C_TYPE_INT32,
+    offsetof(UeInfoM, has_wb_cqi_1tb),
+    offsetof(UeInfoM, wb_cqi_1tb),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "wb_cqi_2tb",
+    27,
+    PROTOBUF_C_LABEL_OPTIONAL,
+    PROTOBUF_C_TYPE_INT32,
+    offsetof(UeInfoM, has_wb_cqi_2tb),
+    offsetof(UeInfoM, wb_cqi_2tb),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "dl_total_window",
+    28,
+    PROTOBUF_C_LABEL_OPTIONAL,
+    PROTOBUF_C_TYPE_UINT32,
+    offsetof(UeInfoM, has_dl_total_window),
+    offsetof(UeInfoM, dl_total_window),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "dl_errors_window",
+    29,
+    PROTOBUF_C_LABEL_OPTIONAL,
+    PROTOBUF_C_TYPE_UINT32,
+    offsetof(UeInfoM, has_dl_errors_window),
+    offsetof(UeInfoM, dl_errors_window),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "dl_bler_window",
+    30,
+    PROTOBUF_C_LABEL_OPTIONAL,
+    PROTOBUF_C_TYPE_FLOAT,
+    offsetof(UeInfoM, has_dl_bler_window),
+    offsetof(UeInfoM, dl_bler_window),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
 };
 static const unsigned ue_info_m__field_indices_by_name[] = {
   7,   /* field[7] = avg_prbs_dl */
@@ -1029,10 +1089,13 @@ static const unsigned ue_info_m__field_indices_by_name[] = {
   10,   /* field[10] = avg_tbs_per_prb_dl */
   11,   /* field[11] = avg_tbs_per_prb_ul */
   17,   /* field[17] = dl_bler */
+  29,   /* field[29] = dl_bler_window */
   16,   /* field[16] = dl_errors */
+  28,   /* field[28] = dl_errors_window */
   6,   /* field[6] = dl_mac_buffer_occupation */
   18,   /* field[18] = dl_mcs */
   15,   /* field[15] = dl_total_bytes */
+  27,   /* field[27] = dl_total_window */
   5,   /* field[5] = is_GBR */
   9,   /* field[9] = mcs */
   24,   /* field[24] = nssai_sD */
@@ -1048,11 +1111,13 @@ static const unsigned ue_info_m__field_indices_by_name[] = {
   20,   /* field[20] = ul_errors */
   22,   /* field[22] = ul_mcs */
   19,   /* field[19] = ul_total_bytes */
+  25,   /* field[25] = wb_cqi_1tb */
+  26,   /* field[26] = wb_cqi_2tb */
 };
 static const ProtobufCIntRange ue_info_m__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 25 }
+  { 0, 30 }
 };
 const ProtobufCMessageDescriptor ue_info_m__descriptor =
 {
@@ -1062,7 +1127,7 @@ const ProtobufCMessageDescriptor ue_info_m__descriptor =
   "UeInfoM",
   "",
   sizeof(UeInfoM),
-  25,
+  30,
   ue_info_m__field_descriptors,
   ue_info_m__field_indices_by_name,
   1,  ue_info_m__number_ranges,
