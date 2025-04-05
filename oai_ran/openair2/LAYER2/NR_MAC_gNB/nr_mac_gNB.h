@@ -720,6 +720,7 @@ typedef struct NR_mac_dir_stats {
   uint8_t num_sched_slots;
   uint32_t total_window;
   uint32_t errors_window;
+  uint32_t total_bytes_window;
 } NR_mac_dir_stats_t;
 
 typedef struct NR_mac_stats {

@@ -1598,9 +1598,9 @@ static void nr_fr1_dlsch_preprocessor(module_id_t module_id, frame_t frame, sub_
    available slices */
   nr_slice_preprocess(module_id, frame, slot);
 
-  // Slice policy update
-  if ((frame & 127) == 0 && slot == 0)
-    nr_update_slice_policy(module_id);
+  // // Slice policy update
+  // if ((frame & 127) == 0 && slot == 0)
+  //   nr_update_slice_policy(module_id);
 
   int bw = scc->downlinkConfigCommon->frequencyInfoDL->scs_SpecificCarrierList.list.array[0]->carrierBandwidth;
   int average_agg_level = 4; // TODO find a better estimation
@@ -2123,6 +2123,7 @@ void nr_schedule_ue_spec(module_id_t module_id,
       UE->mac_stats.dl.current_rbs = sched_pdsch->rbSize;
       UE->mac_stats.dl.total_sdu_bytes += dlsch_total_bytes;
       UE->mac_stats.dl.total_window++;
+      UE->mac_stats.dl.total_bytes_window += TBS;
 
       //SLice_stat
       UE->mac_stats.dl.slice[sched_ctrl->slice_for_this_sched].total_bytes += TBS;

@@ -719,7 +719,7 @@ const ProtobufCMessageDescriptor ran_message__descriptor =
   (ProtobufCMessageInit) ran_message__init,
   NULL,NULL,NULL    /* reserved[123] */
 };
-static const ProtobufCFieldDescriptor ue_info_m__field_descriptors[30] =
+static const ProtobufCFieldDescriptor ue_info_m__field_descriptors[31] =
 {
   {
     "rnti",
@@ -1081,6 +1081,18 @@ static const ProtobufCFieldDescriptor ue_info_m__field_descriptors[30] =
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
+  {
+    "dl_thr_window",
+    31,
+    PROTOBUF_C_LABEL_OPTIONAL,
+    PROTOBUF_C_TYPE_FLOAT,
+    offsetof(UeInfoM, has_dl_thr_window),
+    offsetof(UeInfoM, dl_thr_window),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
 };
 static const unsigned ue_info_m__field_indices_by_name[] = {
   7,   /* field[7] = avg_prbs_dl */
@@ -1094,6 +1106,7 @@ static const unsigned ue_info_m__field_indices_by_name[] = {
   28,   /* field[28] = dl_errors_window */
   6,   /* field[6] = dl_mac_buffer_occupation */
   18,   /* field[18] = dl_mcs */
+  30,   /* field[30] = dl_thr_window */
   15,   /* field[15] = dl_total_bytes */
   27,   /* field[27] = dl_total_window */
   5,   /* field[5] = is_GBR */
@@ -1117,7 +1130,7 @@ static const unsigned ue_info_m__field_indices_by_name[] = {
 static const ProtobufCIntRange ue_info_m__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 30 }
+  { 0, 31 }
 };
 const ProtobufCMessageDescriptor ue_info_m__descriptor =
 {
@@ -1127,7 +1140,7 @@ const ProtobufCMessageDescriptor ue_info_m__descriptor =
   "UeInfoM",
   "",
   sizeof(UeInfoM),
-  30,
+  31,
   ue_info_m__field_descriptors,
   ue_info_m__field_indices_by_name,
   1,  ue_info_m__number_ranges,

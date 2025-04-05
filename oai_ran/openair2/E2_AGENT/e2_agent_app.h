@@ -28,7 +28,16 @@ typedef struct e2_agent_info_t{
     struct sockaddr_in out_sockaddr,in_sockaddr;
     int reuse;
     pthread_mutex_t hb_mutex;
+
+    int listen_sockfd; // socket để listen
+    struct sockaddr_in server_sockaddr;
 } e2_agent_info_t;
+
+
+typedef struct {
+    int sockfd;
+    struct sockaddr_in client_addr;
+} e2_client_info_t;
 
 /*
 this struct will be globally accessible by anyone and it contains values coming from the xapp 
@@ -48,4 +57,4 @@ void *e2_agent_task();
 
 void *e2_heartbeat();
 
-void handle_master_message(void* buf, int buflen, int out_socket, struct sockaddr_in servaddr);
+void handle_master_message(void* buf, int buflen, int out_socket);

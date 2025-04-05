@@ -26,21 +26,21 @@ void handle_subscription(RANMessage* in_mess){
 /*
 this function just basically prints out the parameters in the request and passes the in_mess to the response generator
 */
-void handle_indication_request(RANMessage* in_mess,int out_socket, sockaddr_in peeraddr){
+void handle_indication_request(RANMessage* in_mess, int out_socket) {
     LOG_I(E2_AGENT,"Indication request for %lu parameters:\n", in_mess->ran_indication_request->n_target_params);
     for(int par_i=0; par_i<in_mess->ran_indication_request->n_target_params; par_i++){
         LOG_I(E2_AGENT,"\tParameter id %d requested (a.k.a %s)\n",\
         in_mess->ran_indication_request->target_params[par_i],\
         get_enum_name(in_mess->ran_indication_request->target_params[par_i]));
     }
-    build_indication_response(in_mess, out_socket, peeraddr);
+    build_indication_response(in_mess, out_socket);
 }
 
 /*
 this function builds and sends the indication response based on the map inside the in_mess
 in_mess is cleared here
 */
-void build_indication_response(RANMessage* in_mess, int out_socket, sockaddr_in servaddr){
+void build_indication_response(RANMessage* in_mess, int out_socket){
 
     RANMessage msg = RAN_MESSAGE__INIT;
     msg.msg_type = RAN_MESSAGE_TYPE__INDICATION_RESPONSE;
@@ -77,10 +77,8 @@ void build_indication_response(RANMessage* in_mess, int out_socket, sockaddr_in 
     buf = malloc(buflen);
     ran_message__pack(&msg,buf);
     LOG_I(E2_AGENT,"Sending indication response\n");
-    unsigned slen = sizeof(servaddr);
-    int rev = sendto(out_socket, (const char *)buf, buflen,
-                     MSG_CONFIRM, (const struct sockaddr *) &servaddr,
-                     slen);
+    // unsigned slen = sizeof(servaddr);
+    int rev = send(out_socket, (const char *)buf, buflen, 0);
     LOG_I(E2_AGENT,"Sent %d bytes, buflen was %u\n",rev, buflen);
 
     // free map and buffer (rsp not freed because in the stack)
@@ -280,7 +278,7 @@ char* int_to_charray(int i){
     return ret;
 }
 
-void handle_master_message(void* buf, int buflen, int out_socket, struct sockaddr_in servaddr){
+void handle_master_message(void* buf, int buflen, int out_socket){
     RANMessage* in_mess = ran_message__unpack(NULL, (size_t)buflen, buf);
     if (!in_mess){
         LOG_E(E2_AGENT,"error decoding received message, printing for debug:\n");
@@ -299,11 +297,11 @@ void handle_master_message(void* buf, int buflen, int out_socket, struct sockadd
             break;
         case RAN_MESSAGE_TYPE__INDICATION_REQUEST:
             LOG_I(E2_AGENT,"Indication request message received\n");
-            handle_indication_request(in_mess, out_socket, servaddr);
+            handle_indication_request(in_mess, out_socket);
             break;
         case RAN_MESSAGE_TYPE__INDICATION_RESPONSE:
             LOG_I(E2_AGENT,"Indication response message received\n");
-            build_indication_response(in_mess, out_socket, servaddr);
+            build_indication_response(in_mess, out_socket);
             break;
         case RAN_MESSAGE_TYPE__CONTROL:
             LOG_I(E2_AGENT,"Control message received\n");
@@ -420,6 +418,10 @@ UeListM* get_ue_list(){
 
         stats->dl.total_window = 0;
         stats->dl.errors_window = 0;
+
+        ue_info_list[i]->has_dl_thr_window = 1;
+        ue_info_list[i]->dl_thr_window = stats->dl.total_bytes_window / 5.0;
+        stats->dl.total_bytes_window = 0;
     }
     // add a null terminator to the list
     ue_info_list[num_ues] = NULL;

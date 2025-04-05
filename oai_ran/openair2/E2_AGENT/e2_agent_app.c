@@ -39,27 +39,50 @@ int e2_agent_init(){
     }
     // network init
     // create sockets
-    if((agent_info->in_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0){
-        perror("Failed to create in socket\n");
+    // if((agent_info->in_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0){
+    //     perror("Failed to create in socket\n");
+    //     exit(EXIT_FAILURE);
+    // }
+    if((agent_info->listen_sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0){
+        perror("Failed to create TCP socket\n");
         exit(EXIT_FAILURE);
     }
-    setsockopt(agent_info->in_sockfd, SOL_SOCKET, SO_REUSEADDR, &(agent_info->reuse), sizeof(agent_info->reuse));
-    if((agent_info->out_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0){
-        perror("Failed to create out socket\n");
+
+    // setsockopt(agent_info->in_sockfd, SOL_SOCKET, SO_REUSEADDR, &(agent_info->reuse), sizeof(agent_info->reuse));
+    setsockopt(agent_info->listen_sockfd, SOL_SOCKET, SO_REUSEADDR, &(agent_info->reuse), sizeof(agent_info->reuse));
+    memset(&(agent_info->server_sockaddr), 0, sizeof(agent_info->server_sockaddr));
+
+    // if((agent_info->out_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0){
+    //     perror("Failed to create out socket\n");
+    //     exit(EXIT_FAILURE);
+    // }
+    // memset(&(agent_info->out_sockaddr), 0, sizeof(agent_info->out_sockaddr));
+    // memset(&(agent_info->in_sockaddr), 0, sizeof(agent_info->in_sockaddr));
+
+    // agent_info->out_sockaddr.sin_family = AF_INET;
+    // char ip_address[] = "127.0.0.1";
+    // agent_info->out_sockaddr.sin_addr.s_addr = inet_addr(ip_address);
+    // // agent_info->out_sockaddr.sin_addr.s_addr = INADDR_ANY;
+    // agent_info->out_sockaddr.sin_port = htons(E2AGENT_OUT_PORT);
+
+    // agent_info->in_sockaddr.sin_family = AF_INET;
+    // agent_info->in_sockaddr.sin_addr.s_addr = INADDR_ANY;
+    // agent_info->in_sockaddr.sin_port = htons(E2AGENT_IN_PORT);
+
+    agent_info->server_sockaddr.sin_family = AF_INET;
+    agent_info->server_sockaddr.sin_addr.s_addr = INADDR_ANY;
+    agent_info->server_sockaddr.sin_port = htons(6600);
+    // Bind socket
+    if (bind(agent_info->listen_sockfd, (struct sockaddr *) &(agent_info->server_sockaddr), sizeof(agent_info->server_sockaddr)) != 0) {
+        perror("Failed to bind listen socket");
         exit(EXIT_FAILURE);
     }
-    memset(&(agent_info->out_sockaddr), 0, sizeof(agent_info->out_sockaddr));
-    memset(&(agent_info->in_sockaddr), 0, sizeof(agent_info->in_sockaddr));
-
-    agent_info->out_sockaddr.sin_family = AF_INET;
-    char ip_address[] = "127.0.0.1";
-    agent_info->out_sockaddr.sin_addr.s_addr = inet_addr(ip_address);
-    // agent_info->out_sockaddr.sin_addr.s_addr = INADDR_ANY;
-    agent_info->out_sockaddr.sin_port = htons(E2AGENT_OUT_PORT);
-
-    agent_info->in_sockaddr.sin_family = AF_INET;
-    agent_info->in_sockaddr.sin_addr.s_addr = INADDR_ANY;
-    agent_info->in_sockaddr.sin_port = htons(E2AGENT_IN_PORT);
+    // Listen cho connection từ client
+    if (listen(agent_info->listen_sockfd, 5) < 0) {
+        perror("Failed to listen");
+        exit(EXIT_FAILURE);
+    }
+    LOG_I(E2_AGENT, "TCP server listening on port 6600...\n");
 
     LOG_D(E2_AGENT, "Initializing data bank\n");
     e2_agent_db = malloc(sizeof(e2_agent_databank_t));
@@ -72,11 +95,11 @@ int e2_agent_init(){
     e2_agent_db->true_gbr = 0;
 
 
-    if (bind(agent_info->in_sockfd, (struct sockaddr *) &(agent_info->in_sockaddr), sizeof(agent_info->in_sockaddr)) != 0) {
-        perror("Failed to bind in socket");
-        exit(EXIT_FAILURE);
-    }
-    LOG_D(E2_AGENT, "Agent waiting for UDP datagrams\n");
+    // if (bind(agent_info->in_sockfd, (struct sockaddr *) &(agent_info->in_sockaddr), sizeof(agent_info->in_sockaddr)) != 0) {
+    //     perror("Failed to bind in socket");
+    //     exit(EXIT_FAILURE);
+    // }
+    // LOG_D(E2_AGENT, "Agent waiting for UDP datagrams\n");
 
     // Properly wrapping agent_info in an ittiTask_parms_t structure
     ittiTask_parms_t task_params;
@@ -101,6 +124,32 @@ void* e2_heartbeat(void* args) {
     }
 }
 
+
+void* e2_handle_client(void* args) {
+    e2_client_info_t* client_info = (e2_client_info_t*)args;
+    uint8_t recv_buf[E2AGENT_MAX_BUF_SIZE];
+
+    LOG_I(E2_AGENT, "New client thread: %s:%d\n",
+          inet_ntoa(client_info->client_addr.sin_addr),
+          ntohs(client_info->client_addr.sin_port));
+
+    while (1) {
+        int rcv_len = recv(client_info->sockfd, recv_buf, E2AGENT_MAX_BUF_SIZE, 0);
+        if (rcv_len <= 0) {
+            LOG_I(E2_AGENT, "Client disconnected: %s:%d\n",
+                  inet_ntoa(client_info->client_addr.sin_addr),
+                  ntohs(client_info->client_addr.sin_port));
+            break;
+        }
+        LOG_D(E2_AGENT, "Received %d bytes from client\n", rcv_len);
+        handle_master_message(recv_buf, rcv_len, client_info->sockfd);
+    }
+
+    close(client_info->sockfd);
+    free(client_info);
+    return NULL;
+}
+
 void *e2_agent_task(void* args_p){
     e2_agent_info_t* e2_info = args_p;
     uint8_t recv_buf[E2AGENT_MAX_BUF_SIZE];
@@ -108,11 +157,41 @@ void *e2_agent_task(void* args_p){
     unsigned slen;
     slen = sizeof(e2_info->in_sockaddr);
     itti_mark_task_ready(TASK_E2_AGENT);
-    INFINITE_LOOP {
-        /* Wait for a client */
-        rcv_len = recvfrom(e2_info->in_sockfd, recv_buf, E2AGENT_MAX_BUF_SIZE, 0, (struct sockaddr *) &(e2_info->in_sockaddr), &slen);
-        LOG_D(E2_AGENT, "Received %d bytes\n", rcv_len);
-        handle_master_message(recv_buf, rcv_len, e2_info->out_sockfd, e2_info->out_sockaddr);
+
+    struct sockaddr_in client_addr;
+    socklen_t addr_len = sizeof(client_addr);
+    while (1) {
+        int conn_sockfd = accept(e2_info->listen_sockfd, (struct sockaddr*)&client_addr, &addr_len);
+        if (conn_sockfd < 0) {
+            perror("Failed to accept connection");
+            continue;
+        }
+
+        LOG_I(E2_AGENT, "Accepted connection from %s:%d\n",
+              inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+
+        // Tạo thông tin client
+        e2_client_info_t* client_info = malloc(sizeof(e2_client_info_t));
+        client_info->sockfd = conn_sockfd;
+        client_info->client_addr = client_addr;
+
+        // Tạo thread mới xử lý client
+        pthread_t client_thread;
+        if (pthread_create(&client_thread, NULL, e2_handle_client, client_info) != 0) {
+            perror("Failed to create thread for client");
+            close(conn_sockfd);
+            free(client_info);
+            continue;
+        }
+
+        pthread_detach(client_thread);  // Không cần join
     }
+
+    // INFINITE_LOOP {
+    //     /* Wait for a client */
+    //     rcv_len = recvfrom(e2_info->in_sockfd, recv_buf, E2AGENT_MAX_BUF_SIZE, 0, (struct sockaddr *) &(e2_info->in_sockaddr), &slen);
+    //     LOG_D(E2_AGENT, "Received %d bytes\n", rcv_len);
+    //     handle_master_message(recv_buf, rcv_len, e2_info->out_sockfd, e2_info->out_sockaddr);
+    // }
 
 }

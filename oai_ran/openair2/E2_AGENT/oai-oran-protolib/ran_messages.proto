@@ -101,6 +101,8 @@ message ue_info_m{
     optional uint32 dl_total_window = 28;
     optional uint32 dl_errors_window = 29;
     optional float dl_bler_window = 30;
+
+    optional float dl_thr_window = 31;
 }
 
 message ue_list_m{
