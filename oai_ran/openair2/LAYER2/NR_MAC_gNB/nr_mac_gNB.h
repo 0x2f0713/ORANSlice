@@ -702,6 +702,7 @@ typedef struct nr_slice_stats_s{
   uint32_t total_rbs_retx;
   uint32_t num_mac_sdu;
   uint32_t current_rbs;
+  uint32_t total_bytes_window;
 } nr_slice_stats_t;
 
 

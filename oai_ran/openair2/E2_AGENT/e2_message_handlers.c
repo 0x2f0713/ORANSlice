@@ -12,6 +12,8 @@
 /*Json */
 #include "json-c/json.h"
 
+#define BYTE_TO_MEGABIT 8e-6
+
 extern RAN_CONTEXT_t RC;
 extern PHY_VARS_NR_UE ***PHY_vars_UE_g;
 
@@ -361,7 +363,7 @@ UeListM* get_ue_list(){
 
         NR_UE_sched_ctrl_t *sched_ctrl = &(curr_ue->UE_sched_ctrl);
         ue_info_list[i]->has_dl_mac_buffer_occupation=1;
-        ue_info_list[i]->dl_mac_buffer_occupation = sched_ctrl->num_total_bytes;
+        ue_info_list[i]->dl_mac_buffer_occupation = sched_ctrl->num_total_bytes * BYTE_TO_MEGABIT;
 
         ue_info_list[i]->has_avg_prbs_dl = 1;
         ue_info_list[i]->avg_prbs_dl = curr_ue->avg_prbs_dl;
@@ -420,8 +422,15 @@ UeListM* get_ue_list(){
         stats->dl.errors_window = 0;
 
         ue_info_list[i]->has_dl_thr_window = 1;
-        ue_info_list[i]->dl_thr_window = stats->dl.total_bytes_window / 5.0;
-        stats->dl.total_bytes_window = 0;
+        ue_info_list[i]->dl_thr_window = stats->dl.slice[sched_ctrl->dl_sl_info[4].nssai.sst].total_bytes_window / 5.0 * BYTE_TO_MEGABIT;
+        stats->dl.slice[sched_ctrl->dl_sl_info[4].nssai.sst].total_bytes_window = 0;
+        
+        // for (size_t i = 0; i < MAX_NUM_PDU_SESSION+1; i++)
+        // {
+        //     printf("PDU [%lu]: dl bytes window: %i\n", i, stats->dl.slice[i].total_bytes_window );
+        //     stats->dl.slice[i].total_bytes_window = 0;
+        // }
+        
     }
     // add a null terminator to the list
     ue_info_list[num_ues] = NULL;
