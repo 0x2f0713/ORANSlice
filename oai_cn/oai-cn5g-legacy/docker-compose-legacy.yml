@@ -128,6 +128,9 @@ services:
             # Slice 1 (1, 0x000002)
             - SST_1=1
             - SD_1=0x000002
+            # Slice 1 (1, 0x000002)
+            - SST_2=2
+            - SD_2=0x000002
             - AMF_INTERFACE_NAME_FOR_NGAP=eth0
             - AMF_INTERFACE_NAME_FOR_N11=eth0
             # One single SMF instance
@@ -188,11 +191,19 @@ services:
             # Slice 1 (1, 0x000002)
             - DNN_NI1=oai2
             - TYPE1=IPv4
-            - DNN_RANGE1=12.1.1.128 - 12.1.2.254
+            - DNN_RANGE1=12.1.1.128 - 12.1.1.200
             - NSSAI_SST1=1
             - NSSAI_SD1=0x000002
             - SESSION_AMBR_UL1=10Gbps
             - SESSION_AMBR_DL1=10Gbps
+            # Slice 2 (2, 0x000002)
+            - DNN_NI2=oai_urllc
+            - TYPE2=IPv4
+            - DNN_RANGE2=12.1.1.201 - 12.1.1.254
+            - NSSAI_SST2=2
+            - NSSAI_SD2=0x000002
+            - SESSION_AMBR_UL2=10Gbps
+            - SESSION_AMBR_DL2=10Gbps
         depends_on:
             - oai-nrf
             - oai-amf
