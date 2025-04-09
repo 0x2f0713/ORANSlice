@@ -32,15 +32,34 @@ def handle_received_message(data: bytes, addr=None):
 
     print(f"[{timestamp()}] [RECV] Nhận bản tin từ server")
     print(f" - Loại bản tin: {RAN_message_type.Name(msg.msg_type)}")
+    
+    ue_list = []
 
     if msg.msg_type == RAN_message_type.INDICATION_RESPONSE:
         for param in msg.ran_indication_response.param_map:
-            print(f"   + Param: {param.key}, type: {param.WhichOneof('value')}")
+            if param.key == 3:  # UE_LIST
+                for ue in param.ue_list.ue_info:
+                    rnti = f"0x{ue.rnti:04X}"
+                    dl_buf = ue.dl_mac_buffer_occupation if ue.HasField("dl_mac_buffer_occupation") else "-"
+                    bler = ue.dl_bler_window if ue.HasField("dl_bler_window") else "-"
+                    thr = ue.dl_total_window if ue.HasField("dl_total_window") else "-"
+                    ue_list.append((rnti, dl_buf, bler, thr))
+                    
+                if not ue_list:
+                  print("↪ Không có UE nào trong bản tin.")
+                  return
+        
+                print("\nUE LIST (Indication Response):")
+                print(f"{'RNTI':<10} {'DL Buffer (Mbit)':<15} {'DL BLER (%)':<15} {'DL Thput (Mbit/s)':<15}")
+                print("-" * 55)
+                for rnti, dl_buf, bler, thr in ue_list:
+                    print(f"{rnti:<10} {dl_buf:<15} {bler:<15} {thr:<15}")
+                print("-" * 55)
     else:
         print("   + Nội dung không phải bản tin Indication Response.")
 
-    print("↪ Nội dung chi tiết:")
-    print(MessageToJson(msg, indent=2))
+    # print("↪ Nội dung chi tiết:")
+    # print(MessageToJson(msg, indent=2))
 
 def send_control(sock: socket.socket):
     ctrl_req = RAN_control_request()

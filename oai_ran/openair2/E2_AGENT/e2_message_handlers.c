@@ -12,7 +12,7 @@
 /*Json */
 #include "json-c/json.h"
 
-#define BYTE_TO_MEGABIT 8e-6
+#define BYTE_TO_MEGABIT 8 / 1000000
 
 extern RAN_CONTEXT_t RC;
 extern PHY_VARS_NR_UE ***PHY_vars_UE_g;

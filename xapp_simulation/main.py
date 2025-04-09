@@ -7,7 +7,7 @@ from e2_message import send_indication_request, handle_received_message
 
 
 def main():
-    server_addr = ("hpg1.0x2f0713.id.vn", 6600)
+    server_addr = ("127.0.0.1", 6600)
     interval = 5  # giây
     last_sent_time = 0
 
