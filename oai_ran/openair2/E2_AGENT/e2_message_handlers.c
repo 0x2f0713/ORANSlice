@@ -12,7 +12,8 @@
 /*Json */
 #include "json-c/json.h"
 
-#define BYTE_TO_MEGABIT 8 / 1000000
+#define BYTE_TO_MEGABIT 8e-6
+#define BYTE_TO_MEGABYTE 1e-6
 
 extern RAN_CONTEXT_t RC;
 extern PHY_VARS_NR_UE ***PHY_vars_UE_g;
@@ -341,7 +342,37 @@ UeListM* get_ue_list(){
     NR_UE_info_t* curr_ue;
     // build list of ue_info_m
     UeInfoM** ue_info_list;
-    ue_info_list = malloc(sizeof(UeInfoM*)*(num_ues+1)); // allocating space for 1 additional element which will ne NULL (terminator element)
+
+    printf("\n%-5s %-10s %-26s %-26s %-16s %-16s %-16s %-16s\n",
+        "Idx", "RNTI", "DL_MAC_BUF_OCC", "DL_SL_BUF_OCC", "DL_TOTAL_WIN", "DL_ERR_WIN", "DL_THR_WIN", "DL_MAC_THR_WIN");
+    for (int i = 0; i < num_ues; i++) {
+        curr_ue = UE_info_gnb->list[i];
+        NR_UE_sched_ctrl_t *UE_sched_ctrl = &(curr_ue->UE_sched_ctrl);
+        NR_mac_stats_t *UE_stats = &(curr_ue->mac_stats);
+        printf("%-5d %-10d %-18.2f %-18.2f %-16u %-16u %-16.4f %-16.4f\n",
+               i,
+               curr_ue->rnti,
+               UE_sched_ctrl->num_total_bytes * BYTE_TO_MEGABYTE,
+               UE_sched_ctrl->avail_slice_list[UE_sched_ctrl->dl_sl_info[4].nssai.sst].bytes * BYTE_TO_MEGABYTE,
+               UE_stats->dl.total_window,
+               UE_stats->dl.errors_window,
+               UE_stats->dl.slice[UE_sched_ctrl->dl_sl_info[4].nssai.sst].total_bytes_window / 5.0 * BYTE_TO_MEGABIT,
+               curr_ue->mac_stats.dl.total_bytes_window / 5.0 * BYTE_TO_MEGABIT);
+
+
+        for (int i = 0; i < 9; ++i) {
+            printf("| DL_THR_WIN_SLICE_%d ", i);
+        }
+        printf("|\n");
+    
+        // In dòng giá trị
+        for (int i = 0; i < 9; ++i) {
+            printf("| %-15.4f", UE_stats->dl.slice[i].total_bytes_window / 5.0 * BYTE_TO_MEGABIT);
+        }
+        printf("|\n");
+        curr_ue->mac_stats.dl.total_bytes_window = 0;
+    }
+    ue_info_list = malloc(sizeof(UeInfoM*)*(num_ues+1)); // allocating space for 1 additional element which will ne NULL (terminator element)    
     for(int i = 0; i<num_ues; i++){
         // init list
         ue_info_list[i] = malloc(sizeof(UeInfoM));
@@ -363,7 +394,7 @@ UeListM* get_ue_list(){
 
         NR_UE_sched_ctrl_t *sched_ctrl = &(curr_ue->UE_sched_ctrl);
         ue_info_list[i]->has_dl_mac_buffer_occupation=1;
-        ue_info_list[i]->dl_mac_buffer_occupation = sched_ctrl->num_total_bytes * BYTE_TO_MEGABIT;
+        ue_info_list[i]->dl_mac_buffer_occupation = sched_ctrl->avail_slice_list[sched_ctrl->dl_sl_info[4].nssai.sst].bytes * BYTE_TO_MEGABYTE;
 
         ue_info_list[i]->has_avg_prbs_dl = 1;
         ue_info_list[i]->avg_prbs_dl = curr_ue->avg_prbs_dl;
@@ -432,6 +463,7 @@ UeListM* get_ue_list(){
         // }
         
     }
+
     // add a null terminator to the list
     ue_info_list[num_ues] = NULL;
     // assign ue info pointer

@@ -42,7 +42,7 @@ def handle_received_message(data: bytes, addr=None):
                     rnti = f"0x{ue.rnti:04X}"
                     dl_buf = ue.dl_mac_buffer_occupation if ue.HasField("dl_mac_buffer_occupation") else "-"
                     bler = ue.dl_bler_window if ue.HasField("dl_bler_window") else "-"
-                    thr = ue.dl_total_window if ue.HasField("dl_total_window") else "-"
+                    thr = ue.dl_thr_window if ue.HasField("dl_thr_window") else "-"
                     ue_list.append((rnti, dl_buf, bler, thr))
                     
                 if not ue_list:
